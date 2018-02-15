@@ -11,5 +11,10 @@
   },
   "scripts": {
     "test": "node_modules/.bin/mocha test/**/*.es6 test/**/*.js"
+  },
+  "dependencies": {
+    "binary-search-tree": "^0.2.6",
+    "bluebird": "^3.5.1",
+    "jsonrpc-lite": "github:codebling/jsonrpc-lite"
   }
 }
