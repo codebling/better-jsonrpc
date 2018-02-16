@@ -8,7 +8,7 @@ class IdTable {
   }
 
   extend() {
-    this.table.push(...recurseDigits(this.chars, ++this.digits));
+    this.table = this.table.concat(recurseDigits(this.chars, ++this.digits));
     return this.table;
   }
 
