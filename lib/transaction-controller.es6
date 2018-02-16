@@ -29,12 +29,14 @@ class TransactionController {
     });
     txInfo.promise = promise;
 
-    this.txMap.set(id, txInfo);
-
     if(this.timeout) {
       this.timeoutTree.insert(Date.now() + this.timeout, id);
-      setTimeout(this.rejectExpired, this.timeout);
+      let timer = setTimeout(this.rejectExpired, this.timeout);
+      txInfo.timer = timer;
     }
+
+    this.txMap.set(id, txInfo);
+
     return promise;
   }
   resolve(response) {
@@ -65,6 +67,8 @@ class TransactionController {
       this.timeoutTree.delete(id);
       let txInfo = this.txMap.get(id);
       txInfo.reject('Timed out!');
+      clearTimeout(txInfo.timer);
+
       count++;
     });
     return count;
