@@ -46,25 +46,22 @@ class TransactionController {
 
     return promise;
   }
-  resolve(response) {
-    let id = response.id;
+  closeSuccessly(id, result) {
+    this.close(id, 'resolve', result);
+  }
+  closeErroneously(id, error) {
+    this.close(id, 'reject', error);
+  }
+
+  close(id, resolveOrReject, arg) {
     let record = this.txMap.get(id);
     if(!record) {
       throw new Error('Transaction not found')
     }
-    if(response.error && reponse.error.message) {
-      let message = 'Transaction ' + response.id + ' failed';
-      if(response.error.code) {
-        message += ' with code ' + response.error.id;
-      }
-      record.reject(new Error(message + ': ' + response.error.message));
-    } else {
-      if(response.result) {
-        record.resolve(result);
-      } else {
-        record.reject(new Error('Transaction ' + response.id + ' has no error or result object'))
-      }
-    }
+    record[resolveOrReject](arg);
+    this.txMap.delete(id);
+
+    return record;
   }
 
   rejectExpired() {
