@@ -40,7 +40,7 @@ class JsonRpc extends EventEmitter {
     this.addLF = true;
     this.lineEmitter = new LineEmitter(duplexStream);
     this.txController = new TransactionController();
-    lineEmitter.on('line', (line) => {
+    this.lineEmitter.on('line', (line) => {
       this.emit('read', line);
       let message = JsonRpcLite.parse(line);
       this.emit('message', message);
