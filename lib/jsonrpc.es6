@@ -123,7 +123,7 @@ class JsonRpc extends EventEmitter {
   }
 
   respondError(id, message, code) {
-    let error = new JsonRpcLite.JsonRpcError(message, code);
+    const error = new JsonRpcLite.JsonRpcError(message, code);
     const request = this.txController.closeErroneously(id, error);
     this.sendResponseObject(JsonRpcLite.error(id, error, request));
   }
