@@ -53,7 +53,7 @@ class TransactionController {
     return record.request;
   }
   closeErroneously(id, error) {
-    let record = this.close(id, 'reject', error);
+    const record = this.close(id, 'reject', error);
     if(record.timer) {
       clearTimeout(txInfo.timer);
     }
