@@ -49,13 +49,15 @@ class TransactionController {
     return promise;
   }
   closeSuccessly(id, result) {
-    this.close(id, 'resolve', result);
+    const record = this.close(id, 'resolve', result);
+    return record.request;
   }
   closeErroneously(id, error) {
     let record = this.close(id, 'reject', error);
     if(record.timer) {
       clearTimeout(txInfo.timer);
     }
+    return record.request;
   }
 
   unprepare(id) {
