@@ -17,25 +17,32 @@ class TransactionController {
     this.timeout = timeout;
   }
 
-  create(request) {
+  prepare() {
     this.idIndex = this.getNextIdIndex();
     let id = this.idTable.table[this.idIndex];
-    request.id = id;
-    let txInfo = {request: request};
+
+    this.txMap.set(id, {}); //reserve the id in the map
+    ++this.idIndex;
+
+    return id;
+  }
+  open(id, request) {
+    let record = this.txMap.get(id);
+    record.request = request;
 
     let promise = new Promise(function(resolve, reject) {
-      txInfo.resolve = resolve;
-      txInfo.reject = reject;
+      record.resolve = resolve;
+      record.reject = reject;
     });
-    txInfo.promise = promise;
+    record.promise = promise;
 
     if(this.timeout) {
       this.timeoutTree.insert(Date.now() + this.timeout, id);
       let timer = setTimeout(this.rejectExpired, this.timeout);
-      txInfo.timer = timer;
+      record.timer = timer;
     }
 
-    this.txMap.set(id, txInfo);
+    this.txMap.set(id, record);
 
     return promise;
   }
