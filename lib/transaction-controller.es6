@@ -6,6 +6,7 @@ class TransactionController {
   constructor(options) {
     options = options || {};
     this.timeout = options.timeout || 0;
+    this.recycleMinThreshold  = options.recycleMinThreshold || 2000;
     this.idTable = new IdTable(null, 2);
     this.idIndex = 0;
     this.txMap = new Map();
@@ -84,7 +85,7 @@ class TransactionController {
     if(this.idIndex < this.idTable.length) {
       nextIndex = this.idIndex + 1;
     } else {
-      if(this.idTable.length - thix.txMap.size < 2000) {
+      if(this.idTable.length - thix.txMap.size < this.recycleMinThreshold) {
         this.idTable.extend();
         nextIndex = this.getNextIdIndex();
       } else {
