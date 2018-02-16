@@ -79,9 +79,10 @@ class JsonRpc extends EventEmitter {
   }
 
   request(method, params) {
-    const request = JsonRpcLite.request(1, method, params);
+    const id = this.txController.prepare();
+    const request = JsonRpcLite.request(id, method, params);
 
-    const promise = this.txController.create(request);
+    const promise = this.txController.open(id, request);
 
     this.emit('request', request, promise, 'local');
     this.emit('local.request', request, promise);
@@ -117,16 +118,17 @@ class JsonRpc extends EventEmitter {
   //}
 
   respondSuccess(id, result) {
-    this.sendResponseObject(JsonRpcLite.success(id, result));
+    const request = this.txController.closeSuccessly(id, result);
+    this.sendResponseObject(JsonRpcLite.success(id, result), request);
   }
 
   respondError(id, message, code) {
     let error = new JsonRpcLite.JsonRpcError(message, code);
-    this.sendResponseObject(JsonRpcLite.error(id, error));
+    const request = this.txController.closeErroneously(id, error);
+    this.sendResponseObject(JsonRpcLite.error(id, error, request));
   }
 
-  sendResponseObject(responseObject) {
-    let request = this.txController.close(responseObject.id);
+  sendResponseObject(responseObject, request) {
     this.emit('response', responseObject, request, 'local');
     this.emit('local.response', responseObject, request);
 
