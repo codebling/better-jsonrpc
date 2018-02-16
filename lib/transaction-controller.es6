@@ -3,8 +3,9 @@ const Promise = require('bluebird');
 const BST = require('binary-search-tree').BinarySearchTree;
 
 class TransactionController {
-  constructor(timeout) {
-    this.timeout = timeout || 0;
+  constructor(options) {
+    options = options || {};
+    this.timeout = options.timeout || 0;
     this.idTable = new IdTable(null, 2);
     this.idIndex = 0;
     this.txMap = new Map();
