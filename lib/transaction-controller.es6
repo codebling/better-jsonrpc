@@ -58,12 +58,17 @@ class TransactionController {
     }
   }
 
+  unprepare(id) {
+    this.close(id, null);
+  }
   close(id, resolveOrReject, arg) {
     let record = this.txMap.get(id);
     if(!record) {
       throw new Error('Transaction not found')
     }
-    record[resolveOrReject](arg);
+    if(resolveOrReject) {
+      record[resolveOrReject](arg);
+    }
     this.txMap.delete(id);
 
     return record;
