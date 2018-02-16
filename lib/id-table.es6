@@ -4,7 +4,7 @@ class IdTable {
     this.digits = digits || 0;
     this.chars = (chars || 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ').split(''); //no lowercase L or uppercase I, they look too similar
     for(let x=1; x <= digits; x++)
-      extend();
+      this.extend();
   }
 
   extend() {
