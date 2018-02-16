@@ -50,7 +50,10 @@ class TransactionController {
     this.close(id, 'resolve', result);
   }
   closeErroneously(id, error) {
-    this.close(id, 'reject', error);
+    let record = this.close(id, 'reject', error);
+    if(record.timer) {
+      clearTimeout(txInfo.timer);
+    }
   }
 
   close(id, resolveOrReject, arg) {
@@ -69,10 +72,7 @@ class TransactionController {
     let count = 0;
     expiredTransactions.forEach(id => {
       this.timeoutTree.delete(id);
-      let txInfo = this.txMap.get(id);
-      txInfo.reject('Timed out!');
-      clearTimeout(txInfo.timer);
-
+      this.closeErroneously(id, 'Timed out');
       count++;
     });
     return count;
