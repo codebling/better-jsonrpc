@@ -10,7 +10,7 @@ class TransactionController {
     this.txMap = new Map();
     this.timeoutTree = new BST();
 
-    this.rejectExpired.bind(this);
+    this.closeExpired.bind(this);
   }
 
   setTimeout(timeout) {
@@ -38,7 +38,7 @@ class TransactionController {
 
     if(this.timeout) {
       this.timeoutTree.insert(Date.now() + this.timeout, id);
-      let timer = setTimeout(this.rejectExpired, this.timeout);
+      let timer = setTimeout(this.closeExpired, this.timeout);
       record.timer = timer;
     }
 
@@ -67,7 +67,7 @@ class TransactionController {
     return record;
   }
 
-  rejectExpired() {
+  closeExpired() {
     let expiredTransactions = this.timeoutTree.betweenBounds({$lte: Date.now()});
     let count = 0;
     expiredTransactions.forEach(id => {
