@@ -146,8 +146,8 @@ class JsonRpc extends EventEmitter {
     this.sendFinalString(responseString);
   }
   sendFinalString(finalResponseString) {
-    this.emit('write', responseString);
-    this.stream.write(responseString);
+    this.emit('write', finalResponseString);
+    this.stream.write(finalResponseString);
   }
 }
 
