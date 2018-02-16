@@ -1,5 +1,5 @@
 {
-  "name": "json-rpc",
+  "name": "better-jsonrpc",
   "version": "1.0.0",
   "main": "index.es6",
   "private": true,
