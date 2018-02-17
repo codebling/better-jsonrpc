@@ -5,6 +5,7 @@ class LineEmitter extends EventEmitter {
     super();
     this.buffer = '';
     this.processData = this.processData.bind(this);
+    this.readable = readable;
     this.resetBuffer = (() => this.buffer = '').bind(this);
     readable.on('data', this.processData);
     readable.on('end', this.resetBuffer);
@@ -26,6 +27,15 @@ class LineEmitter extends EventEmitter {
         this.emit('line', line);
       }
     } while(newlineFound);
+  }
+
+  destroy() {
+    super.eventNames().forEach(eventName => super.removeAllListeners(eventName));
+    this.readable.removeListener('data', this.processData);
+    this.readable.removeListener('end', this.resetBuffer);
+    this.readable.removeListener('close', this.resetBuffer);
+    this.buffer = null;
+    this.readable = null;
   }
 }
 
