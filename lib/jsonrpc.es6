@@ -161,6 +161,15 @@ class JsonRpc extends EventEmitter {
     this.emit('write', finalResponseString);
     this.stream.write(finalResponseString);
   }
+
+  destroy() {
+    this.eventNames().forEach(eventName => this.removeAllListeners(eventName));
+    this.lineEmitter.destroy();
+    this.lineEmitter = null;
+
+    this.stream = null;
+    this.txController = null;
+  }
 }
 
 class Response {
