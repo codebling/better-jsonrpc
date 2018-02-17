@@ -65,9 +65,18 @@ class JsonRpc extends EventEmitter {
         this.emit('remote.requestOrNotification.' + message.method, message, response, 'remote', message.params);
       }
       if(message instanceof JsonRpcLite.SuccessObject || message instanceof JsonRpcLite.ErrorObject) {
+      if(message instanceof JsonRpcLite.SuccessObject) {
         let request = txController.closeSuccessly(message.id, message.result);
-        this.emit('response', message, request, 'remote');
-        this.emit('remote.response', message, request, 'remote');
+        this.emit('response.result', message, request, 'remote', responseObject.result);
+        this.emit('remote.response.result', message, request, 'remote', responseObject.result);
+      }
+      if(message instanceof JsonRpcLite.ErrorObject) {
+        let request = txController.closeErroneously(message.id, message.error);
+        this.emit('response.error', message, request, 'remote', responseObject.error);
+        this.emit('remote.response.error', message, request, 'remote', responseObject.error);
+      }
+      this.emit('response', message, request, 'remote');
+      this.emit('remote.response', message, request, 'remote');
       }
     })
   }
@@ -141,13 +150,15 @@ class JsonRpc extends EventEmitter {
   }
 
   sendResponseObject(responseObject, request) {
+    if(responseObject.result) {
+      this.emit('response.result', responseObject, request, 'local', responseObject.result);
+      this.emit('local.response.result', responseObject, request, 'local', responseObject.result);
+    } else {
+      this.emit('response.error', responseObject, request, 'local', responseObject.error);
+      this.emit('local.response.error', responseObject, request, 'local', responseObject.error);
+    }
     this.emit('response', responseObject, request, 'local');
     this.emit('local.response', responseObject, request, 'local');
-
-    if(responseObject.error) {
-      this.emit('error', error, request, 'local');
-      this.emit('local.error', error, request, 'local');
-    }
     let responseString = JSON.stringify(responseObject);
     this.sendString(responseString);
   }
