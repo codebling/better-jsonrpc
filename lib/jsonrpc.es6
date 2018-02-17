@@ -48,21 +48,21 @@ class JsonRpc extends EventEmitter {
         let response = new Response(message.id, this);
         if(message instanceof JsonRpcLite.RequestObject) {
           txController.add(message, response);
-          this.emit('request', message, response, 'remote');
-          this.emit('request.' + message.method, message, response, 'remote');
-          this.emit('remote.request', message, response, 'remote');
-          this.emit('remote.request.' + message.method, message, response, 'remote');
+          this.emit('request', message, response, 'remote', message.params);
+          this.emit('request.' + message.method, message, response, 'remote', message.params);
+          this.emit('remote.request', message, response, 'remote', message.params);
+          this.emit('remote.request.' + message.method, message, response, 'remote', message.params);
         }
         if(message instanceof JsonRpcLite.NotificationObject) {
-          this.emit('notification', message, response, 'remote');
-          this.emit('notification.' + message.method, message, response, 'remote');
-          this.emit('remote.notification', message, response, 'remote');
-          this.emit('remote.notification.' + message.method, message, response, 'remote');
+          this.emit('notification', message, response, 'remote', message.params);
+          this.emit('notification.' + message.method, message, response, 'remote', message.params);
+          this.emit('remote.notification', message, response, 'remote', message.params);
+          this.emit('remote.notification.' + message.method, message, response, 'remote', message.params);
         }
-        this.emit('requestOrNotification', message, response, 'remote');
-        this.emit('requestOrNotification.' + message.method, message, response, 'remote');
-        this.emit('remote.requestOrNotification', message, response, 'remote');
-        this.emit('remote.requestOrNotification.' + message.method, message, response, 'remote');
+        this.emit('requestOrNotification', message, response, 'remote', message.params);
+        this.emit('requestOrNotification.' + message.method, message, response, 'remote', message.params);
+        this.emit('remote.requestOrNotification', message, response, 'remote', message.params);
+        this.emit('remote.requestOrNotification.' + message.method, message, response, 'remote', message.params);
       }
       if(message instanceof JsonRpcLite.SuccessObject || message instanceof JsonRpcLite.ErrorObject) {
         let request = txController.close(id);
@@ -78,10 +78,10 @@ class JsonRpc extends EventEmitter {
     let resolve;
     const promise = new Promise(res => resolve=res);
 
-    this.emit('notification', notification, promise, 'local');
-    this.emit('notification.' + notification.method, notification, promise, 'local');
-    this.emit('local.notification', notification, promise, 'local');
-    this.emit('local.notification.' + notification.method, notification, promise, 'local');
+    this.emit('notification', notification, promise, 'local', notification.params);
+    this.emit('notification.' + notification.method, notification, promise, 'local', notification.params);
+    this.emit('local.notification', notification, promise, 'local', notification.params);
+    this.emit('local.notification.' + notification.method, notification, promise, 'local', notification.params);
 
     this.sendRequestOrNotificationObject(notification, promise, resolve);
   }
@@ -92,20 +92,20 @@ class JsonRpc extends EventEmitter {
 
     const promise = this.txController.open(id, request);
 
-    this.emit('request', request, promise, 'local');
-    this.emit('request.' + request.method, request, promise, 'local');
-    this.emit('local.request', request, promise, 'local');
-    this.emit('local.request.' + request.method, request, promise, 'local');
+    this.emit('request', request, promise, 'local', request.params);
+    this.emit('request.' + request.method, request, promise, 'local', request.params);
+    this.emit('local.request', request, promise, 'local', request.params);
+    this.emit('local.request.' + request.method, request, promise, 'local', request.params);
 
     this.sendRequestOrNotificationObject(request, promise);
 
     return promise;
   }
   sendRequestOrNotificationObject(requestOrNotificationObject, promise, resolverIfShouldBeResolved) {
-    this.emit('requestOrNotification', requestOrNotificationObject, promise, 'local');
-    this.emit('requestOrNotification.' + requestOrNotificationObject.method, requestOrNotificationObject, promise, 'local');
-    this.emit('local.requestOrNotification', requestOrNotificationObject, promise, 'local');
-    this.emit('local.requestOrNotification.' + requestOrNotificationObject.method, requestOrNotificationObject, promise, 'local');
+    this.emit('requestOrNotification', requestOrNotificationObject, promise, 'local', requestOrNotificationObject.params);
+    this.emit('requestOrNotification.' + requestOrNotificationObject.method, requestOrNotificationObject, promise, 'local', requestOrNotificationObject.params);
+    this.emit('local.requestOrNotification', requestOrNotificationObject, promise, 'local', requestOrNotificationObject.params);
+    this.emit('local.requestOrNotification.' + requestOrNotificationObject.method, requestOrNotificationObject, promise, 'local', requestOrNotificationObject.params);
 
     let responseString = JSON.stringify(requestOrNotificationObject);
     this.sendString(responseString);
