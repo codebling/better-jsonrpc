@@ -5,8 +5,10 @@ class LineEmitter extends EventEmitter {
     super();
     this.buffer = '';
     this.processData = this.processData.bind(this);
+    this.resetBuffer = (() => this.buffer = '').bind(this);
     readable.on('data', this.processData);
-    readable.on('connect', () => this.buffer = '');
+    readable.on('end', this.resetBuffer);
+    readable.on('close', this.resetBuffer);
   }
   processData(stringData) {
     this.buffer += stringData;
