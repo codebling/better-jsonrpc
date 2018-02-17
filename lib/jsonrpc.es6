@@ -57,6 +57,7 @@ class JsonRpc extends EventEmitter {
         }
         this.emit('requestOrNotification', message, response, 'remote');
         this.emit('remote.requestOrNotification', message, response);
+        this.emit(message.method, message.params, response);
       }
       if(message instanceof JsonRpcLite.SuccessObject || message instanceof JsonRpcLite.ErrorObject) {
         let request = txController.close(id);
