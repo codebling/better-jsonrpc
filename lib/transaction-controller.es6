@@ -29,7 +29,7 @@ class TransactionController {
     return id;
   }
   open(id, request) {
-    let record = this.txMap.get(id);
+    let record = this.txMap.get(id) || {};
     record.request = request;
 
     let promise = new Promise(function(resolve, reject) {
