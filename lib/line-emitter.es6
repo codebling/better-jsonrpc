@@ -30,7 +30,7 @@ class LineEmitter extends EventEmitter {
   }
 
   destroy() {
-    super.eventNames().forEach(eventName => super.removeAllListeners(eventName));
+    this.eventNames().forEach(eventName => this.removeAllListeners(eventName));
     this.readable.removeListener('data', this.processData);
     this.readable.removeListener('end', this.resetBuffer);
     this.readable.removeListener('close', this.resetBuffer);
