@@ -121,7 +121,7 @@ class JsonRpc extends EventEmitter {
     this.sendString(responseString);
 
     if(resolverIfShouldBeResolved) {
-      resolverIfShouldBeResolved(new JsonRpcLite.success(null, 'OK'));
+      resolverIfShouldBeResolved();
     }
   }
 
