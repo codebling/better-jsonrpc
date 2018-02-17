@@ -42,7 +42,7 @@ class JsonRpc extends EventEmitter {
     this.txController = new TransactionController();
     this.lineEmitter.on('line', (line) => {
       this.emit('read', line);
-      let message = JsonRpcLite.parse(line).parsed;
+      let message = JsonRpcLite.parse(line).payload;
       this.emit('message', message);
       if(message instanceof JsonRpcLite.RequestObject || message instanceof JsonRpcLite.NotificationObject) {
         let response = new Response(message.id, this);
