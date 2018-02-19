@@ -38,6 +38,7 @@ class JsonRpc extends EventEmitter {
     super();
     this.stream = duplexStream;
     this.addLF = true;
+    this.rejectLocalErrorResponsePromises = false;
     this.lineEmitter = new LineEmitter(duplexStream);
     this.txController = new TransactionController();
     this.lineEmitter.on('line', (line) => {
@@ -146,7 +147,13 @@ class JsonRpc extends EventEmitter {
 
   respondError(id, message, code) {
     const error = new JsonRpcLite.JsonRpcError(message, code);
-    const request = this.txController.closeErroneously(id, error);
+
+    //don't reject promises for locally-originating error responses
+    // unless explicitly configured to do so (otherwise we cause
+    // unhandled promise rejections
+    let reject = this.rejectLocalErrorResponsePromises ? 'reject' : null;
+    const request = this.txController.close(id, reject, error);
+
     this.sendResponseObject(JsonRpcLite.error(id, error, request));
   }
 
