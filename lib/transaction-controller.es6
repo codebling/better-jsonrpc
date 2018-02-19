@@ -54,9 +54,6 @@ class TransactionController {
   }
   closeErroneously(id, error) {
     const record = this.close(id, 'reject', error);
-    if(record.timer) {
-      clearTimeout(txInfo.timer);
-    }
     return record.request;
   }
 
@@ -72,6 +69,10 @@ class TransactionController {
       record[resolveOrReject](arg);
     }
     this.txMap.delete(id);
+
+    if(record.timer) {
+      clearTimeout(txInfo.timer);
+    }
 
     return record;
   }
