@@ -1,42 +1,45 @@
 class IdTable {
-  constructor(chars, digits) {
-    this.table = [];
-    this.digits = digits || 0;
-    this.chars = (chars || 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ').split(''); //no lowercase L or uppercase I, they look too similar
-    for(let x=1; x <= digits; x++)
-      this.extend();
+  constructor(chars) {
+    this.chars = chars || 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ'; //no lowercase L or uppercase I, they look too similar
   }
 
-  extend() {
-    this.table = this.table.concat(recurseDigits(this.chars, ++this.digits));
-    return this.table;
+  getId(number) {
+    let i = 0;
+    const digits = [];
+    while(true) {
+      let divided = Math.floor(number / Math.pow(this.chars.length, i));
+      const digit = divided % this.chars.length;
+      digits.push(digit);
+      if(divided < this.chars.length)
+        break;
+      number -= digit;
+      i++;
+    }
+    return digits.reduceRight((string, cur) => string += this.chars.charAt(cur), '');
   }
 
-  get length() {
-    return this.table.length;
+  /**
+   *
+   * @param id
+   */
+  getIndex(id) {
+    const digits = id.split('').reverse();
+    let index = 0;
+    for(let i = digits.length - 1 ; i >= 0; i--) {
+      index += (this.chars.indexOf(digits[i]) + 1) * Math.pow(this.chars.length, i);
+    }
+    return index;
   }
 
-  getTable() {
-    return this.table;
+  /**
+   * Gets the space available for a given number of digits
+   * @param digits the number of digits
+   * @returns {number} the number of IDs available for the given number of digits
+   */
+  getSize(digits) {
+    return Math.pow(this.chars.length, digits);
   }
-}
 
-function recurseDigits(availableCharacters, numberOfDigits, current, ret) {
-  --numberOfDigits;
-  if(!ret)
-    ret = [];
-  if(!current)
-    current = '';
-  
-  availableCharacters.forEach(function(character) {
-    let newer = current + character;
-    if(numberOfDigits > 0)
-      recurseDigits(availableCharacters, numberOfDigits, newer, ret);
-    else
-      ret.push(newer);
-  });
-
-  return ret;
 }
 
 module.exports = IdTable;
