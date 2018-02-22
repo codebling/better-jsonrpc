@@ -99,7 +99,7 @@ class TransactionController {
         nextIndex = this.getNextIdIndex();
       } else {
         nextIndex = 0; //we have enough, start reusing
-        const usedIndexes = this.txMap.keys().map(key => this.idTable.getIndex(key));
+        const usedIndexes = Array.from(this.txMap.keys()).map(key => this.idTable.getIndex(key));
         while (true) {
           if(usedIndexes.indexOf(nextIndex) > -1)
             ++nextIndex;
