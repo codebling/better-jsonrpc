@@ -24,8 +24,7 @@ class TransactionController {
     this.idIndex = this.getNextIdIndex();
     let id = this.idTable.getId(this.idIndex);
 
-    this.txMap.set(id, {}); //reserve the id in the map
-    ++this.idIndex;
+    this.txMap.set(id, {index: this.idIndex}); //reserve the id in the map
 
     return id;
   }
@@ -99,7 +98,7 @@ class TransactionController {
         nextIndex = this.getNextIdIndex();
       } else {
         nextIndex = 0; //we have enough, start reusing
-        const usedIndexes = Array.from(this.txMap.keys()).map(key => this.idTable.getIndex(key));
+        const usedIndexes = Array.from(this.txMap.values()).map(record => record.index);
         while (true) {
           if(usedIndexes.indexOf(nextIndex) > -1)
             ++nextIndex;
