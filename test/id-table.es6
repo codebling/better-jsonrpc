@@ -3,6 +3,7 @@ const expect = require('chai').expect;
 
 const IdTable = require('../lib/id-table.es6');
 
+describe('IdTable', function() {
 it('should return the index when getIndex(getId(index))', function() {
   const table = new IdTable();
 
@@ -23,4 +24,5 @@ it('should never duplicate an id', function() {
     expect(usedIds.has(id), 'index: ' + i).to.be.false;
     usedIds.add(id);
   }
+});
 });

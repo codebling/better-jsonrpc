@@ -10,7 +10,8 @@
     "sinon": "^4.2.2"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha test/**/*.es6 test/**/*.js"
+    "test": "node_modules/.bin/mocha test/**/*.es6 test/**/*.js",
+    "perf": "node_modules/.bin/mocha perf/**/*.es6 perf/**/*.js"
   },
   "dependencies": {
     "binary-search-tree": "^0.2.6",
