@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const IdTable = require('../lib/id-table.es6');
 
 describe('IdTable', function() {
-  it('should return the index when getIndex(getId(index))', function() {
+  it('should have symmetrical getIndex and getId functions', function() {
     const table = new IdTable();
 
     let i;
@@ -15,7 +15,7 @@ describe('IdTable', function() {
 
   });
 
-  it('should never duplicate an id', function() {
+  it('should never duplicate an ID', function() {
     const table = new IdTable();
     const usedIds = new Set();
     for(let i = 0; i < table.getSize(2) + 5; i++) {
