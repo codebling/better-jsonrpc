@@ -8,7 +8,7 @@ class TransactionController {
     this.timeout = options.timeout || 0;
     this.recycleMinThreshold  = options.recycleMinThreshold || 2000;
     this.idTable = new IdTable();
-    this.idIndex = 0;
+    this.idIndex = -1;
     this.idDigits = 1;
     this.txMap = new Map();
     this.timeoutTree = new BST();
