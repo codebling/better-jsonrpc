@@ -90,22 +90,22 @@ class TransactionController {
 
   getNextIdIndex() {
     let nextIndex;
-    if(this.idIndex < this.idTable.getSize(this.idDigits)) {
+    let isIndexSmallerThanTable = () => this.idIndex < this.idTable.getSize(this.idDigits);
+    let isRecyclingPossible = this.idTable.getSize(this.idDigits) - this.txMap.size > this.recycleMinThreshold;
+    if(!isIndexSmallerThanTable() && !isRecyclingPossible) {
+      ++this.idDigits;
+    }
+    if(isIndexSmallerThanTable()) {
       nextIndex = this.idIndex + 1;
     } else {
-      if(this.idTable.getSize(this.idDigits) - this.txMap.size < this.recycleMinThreshold) {
-        ++this.idDigits;
-        nextIndex = this.getNextIdIndex();
-      } else {
-        nextIndex = 0; //we have enough, start reusing
-        const usedIndexes = Array.from(this.txMap.values()).map(record => record.index);
-        while (true) {
-          if(usedIndexes.indexOf(nextIndex) > -1)
-            ++nextIndex;
-          else
-            break;
-        }
-      }
+      nextIndex = 0; //we have enough, start reusing
+    }
+    const usedIndexes = Array.from(this.txMap.values()).map(record => record.index);
+    while (true) {
+      if(usedIndexes.indexOf(nextIndex) > -1)
+        ++nextIndex;
+      else
+        break;
     }
     return nextIndex;
   }

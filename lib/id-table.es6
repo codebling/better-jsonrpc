@@ -4,18 +4,22 @@ class IdTable {
   }
 
   getId(number) {
-    let i = 0;
+    const base = this.chars.length;
+    const logb = number == 0 ? 0 : Math.floor(Math.log(number)/Math.log(base)); //log in base 'base' of number
     const digits = [];
-    while(true) {
-      let divided = Math.floor(number / Math.pow(this.chars.length, i));
-      const digit = divided % this.chars.length;
+    let leadingDigit = true;
+    let baseToTheI, digit; //reuse these every loop instead of redeclaring to save gc
+    for(let i = logb; i >= 0; i--) {
+      baseToTheI = Math.pow(base, i);
+      digit = Math.floor(number / baseToTheI);
+      number -= digit * baseToTheI;
+      if(leadingDigit && i != 0) {
+        --digit;
+        leadingDigit = false;
+      }
       digits.push(digit);
-      if(divided < this.chars.length)
-        break;
-      number -= digit;
-      i++;
     }
-    return digits.reduceRight((string, cur) => string += this.chars.charAt(cur), '');
+    return digits.reduce((string, cur) => string += this.chars.charAt(cur), '');
   }
 
   /**
@@ -23,10 +27,17 @@ class IdTable {
    * @param id
    */
   getIndex(id) {
+    const base = this.chars.length;
     const digits = id.split('').reverse();
     let index = 0;
+    let leadingDigit = true;
     for(let i = digits.length - 1 ; i >= 0; i--) {
-      index += (this.chars.indexOf(digits[i]) + 1) * Math.pow(this.chars.length, i);
+      let digit = this.chars.indexOf(digits[i]);
+      if(leadingDigit && i != 0) {
+        leadingDigit = false;
+        ++digit;
+      }
+      index += digit * Math.pow(base, i);
     }
     return index;
   }
