@@ -7,8 +7,9 @@ class TransactionController {
     options = options || {};
     this.timeout = options.timeout || 0;
     this.recycleMinThreshold  = options.recycleMinThreshold || 2000;
-    this.idTable = new IdTable(null, 2);
+    this.idTable = new IdTable();
     this.idIndex = 0;
+    this.idDigits = 1;
     this.txMap = new Map();
     this.timeoutTree = new BST();
 
@@ -21,10 +22,9 @@ class TransactionController {
 
   prepare() {
     this.idIndex = this.getNextIdIndex();
-    let id = this.idTable.table[this.idIndex];
+    let id = this.idTable.getId(this.idIndex);
 
-    this.txMap.set(id, {}); //reserve the id in the map
-    ++this.idIndex;
+    this.txMap.set(id, {index: this.idIndex}); //reserve the id in the map
 
     return id;
   }
@@ -90,15 +90,22 @@ class TransactionController {
 
   getNextIdIndex() {
     let nextIndex;
-    if(this.idIndex < this.idTable.length) {
+    let isIndexSmallerThanTable = () => this.idIndex < this.idTable.getSize(this.idDigits);
+    let isRecyclingPossible = this.idTable.getSize(this.idDigits) - this.txMap.size > this.recycleMinThreshold;
+    if(!isIndexSmallerThanTable() && !isRecyclingPossible) {
+      ++this.idDigits;
+    }
+    if(isIndexSmallerThanTable()) {
       nextIndex = this.idIndex + 1;
     } else {
-      if(this.idTable.length - thix.txMap.size < this.recycleMinThreshold) {
-        this.idTable.extend();
-        nextIndex = this.getNextIdIndex();
-      } else {
-        nextIndex = 0; //we have enough, start reusing
-      }
+      nextIndex = 0; //we have enough, start reusing
+    }
+    const usedIndexes = Array.from(this.txMap.values()).map(record => record.index);
+    while (true) {
+      if(usedIndexes.indexOf(nextIndex) > -1)
+        ++nextIndex;
+      else
+        break;
     }
     return nextIndex;
   }
