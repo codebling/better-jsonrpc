@@ -70,15 +70,21 @@ class JsonRpc extends EventEmitter {
       if(message instanceof JsonRpcLite.SuccessObject) {
         request = this.txController.closeSuccessly(message.id, message.result);
         this.emit('response.result', message, request, 'remote', message.result);
+        this.emit('response.' + request.method + '.result', message, request, 'remote', message.result);
         this.emit('remote.response.result', message, request, 'remote', message.result);
+        this.emit('remote.response.' + request.method + '.result', message, request, 'remote', message.result);
       }
       if(message instanceof JsonRpcLite.ErrorObject) {
         request = this.txController.closeErroneously(message.id, message.error);
         this.emit('response.error', message, request, 'remote', message.error);
+        this.emit('response.' + request.method + '.error', message, request, 'remote', message.error);
         this.emit('remote.response.error', message, request, 'remote', message.error);
+        this.emit('remote.response.' + request.method + '.error', message, request, 'remote', message.error);
       }
       this.emit('response', message, request, 'remote');
+      this.emit('response.' + request.method, message, request, 'remote');
       this.emit('remote.response', message, request, 'remote');
+      this.emit('remote.response.' + request.method, message, request, 'remote');
       }
     })
   }
@@ -160,13 +166,19 @@ class JsonRpc extends EventEmitter {
   sendResponseObject(responseObject, request) {
     if(responseObject.result) {
       this.emit('response.result', responseObject, request, 'local', responseObject.result);
+      this.emit('response.' + request.method + '.result', responseObject, request, 'local', responseObject.result);
       this.emit('local.response.result', responseObject, request, 'local', responseObject.result);
+      this.emit('local.response.' + request.method + '.result', responseObject, request, 'local', responseObject.result);
     } else {
       this.emit('response.error', responseObject, request, 'local', responseObject.error);
+      this.emit('response.' + request.method + '.error', responseObject, request, 'local', responseObject.error);
       this.emit('local.response.error', responseObject, request, 'local', responseObject.error);
+      this.emit('local.response.' + request.method + '.error', responseObject, request, 'local', responseObject.error);
     }
     this.emit('response', responseObject, request, 'local');
+    this.emit('response.' + request.method, responseObject, request, 'local');
     this.emit('local.response', responseObject, request, 'local');
+    this.emit('local.response.' + request.method, responseObject, request, 'local');
     let responseString = JSON.stringify(responseObject);
     this.sendString(responseString);
   }
