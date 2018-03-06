@@ -160,7 +160,7 @@ class JsonRpc extends EventEmitter {
     let reject = this.rejectLocalErrorResponsePromises ? 'reject' : null;
     const request = this.txController.close(id, reject, error);
 
-    this.sendResponseObject(JsonRpcLite.error(id, error, request));
+    this.sendResponseObject(JsonRpcLite.error(id, error), request);
   }
 
   sendResponseObject(responseObject, request) {
