@@ -101,6 +101,8 @@ class JsonRpc extends EventEmitter {
     this.emit('local.notification.' + notification.method, notification, promise, 'local', notification.params);
 
     this.sendRequestOrNotificationObject(notification, promise, resolve);
+
+    return promise;
   }
 
   request(method, params) {
