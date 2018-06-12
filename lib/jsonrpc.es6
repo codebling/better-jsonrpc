@@ -100,7 +100,11 @@ class JsonRpc extends EventEmitter {
     this.emit('local.notification', notification, promise, 'local', notification.params);
     this.emit('local.notification.' + notification.method, notification, promise, 'local', notification.params);
 
+    try {
     this.sendRequestOrNotificationObject(notification, promise, resolve);
+    } catch(error) {
+      promise.reject(error);
+    }
 
     return promise;
   }
@@ -116,7 +120,11 @@ class JsonRpc extends EventEmitter {
     this.emit('local.request', request, promise, 'local', request.params);
     this.emit('local.request.' + request.method, request, promise, 'local', request.params);
 
+    try {
     this.sendRequestOrNotificationObject(request, promise);
+    } catch(error) {
+      this.txController.closeErroneously(id, error);
+    }
 
     return promise;
   }
