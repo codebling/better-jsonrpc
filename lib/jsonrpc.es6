@@ -121,13 +121,13 @@ class JsonRpc extends EventEmitter {
     return promise;
   }
   sendRequestOrNotificationObject(requestOrNotificationObject, promise, resolverIfShouldBeResolved) {
+    let responseString = JSON.stringify(requestOrNotificationObject);
+    this.sendString(responseString);
+
     this.emit('requestOrNotification', requestOrNotificationObject, promise, 'local', requestOrNotificationObject.params);
     this.emit('requestOrNotification.' + requestOrNotificationObject.method, requestOrNotificationObject, promise, 'local', requestOrNotificationObject.params);
     this.emit('local.requestOrNotification', requestOrNotificationObject, promise, 'local', requestOrNotificationObject.params);
     this.emit('local.requestOrNotification.' + requestOrNotificationObject.method, requestOrNotificationObject, promise, 'local', requestOrNotificationObject.params);
-
-    let responseString = JSON.stringify(requestOrNotificationObject);
-    this.sendString(responseString);
 
     if(resolverIfShouldBeResolved) {
       resolverIfShouldBeResolved();
