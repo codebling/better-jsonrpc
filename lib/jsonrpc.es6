@@ -34,17 +34,21 @@ jsonrpc-lite-parse emit('response', req, res) && res promise resolve  <-
  */
 
 class JsonRpc extends EventEmitter {
-  constructor(duplexStream) {
+  constructor(options) {
     super();
-    this.stream = duplexStream;
-    this.addLF = true;
-    this.rejectLocalErrorResponsePromises = false;
-    this.lineEmitter = new LineEmitter(duplexStream);
-    this.txController = new TransactionController();
+    this.stream = options.stream;
+    this.addLF = 'addLF' in options ? options.addLF : true;
+    this.rejectLocalErrorResponsePromises = options.rejectLocalErrorResponsePromises || false;
+    this.lineEmitter = options.lineEmitter || new LineEmitter(stream);
+    this.txController = options.txController || new TransactionController();
+    this.objectEmitter = options.objectEmitter || this;
+
     this.lineEmitter.on('line', (line) => {
       this.emit('read', line);
       let message = JsonRpcLite.parse(line).payload;
       this.emit('message', message);
+    });
+    this.objectEmitter.on('message', (message) => {
       if(message instanceof JsonRpcLite.RequestObject || message instanceof JsonRpcLite.NotificationObject) {
         let response = new Response(message.id, this);
         if(message instanceof JsonRpcLite.RequestObject) {
