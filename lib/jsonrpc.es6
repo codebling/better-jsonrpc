@@ -48,7 +48,7 @@ class JsonRpc extends EventEmitter {
       this.objectEmitter.send = object => {
         let responseString = JSON.stringify(object);
         this.sendString(responseString);
-      }
+      };
     }
     if(this.lineEmitter == null) {
       this.lineEmitter = new LineEmitter(stream);
@@ -57,7 +57,7 @@ class JsonRpc extends EventEmitter {
           string += '\n';
         }
         this.sendFinalString(string);
-      }
+      };
     }
     this.lineEmitter.on('line', (line) => {
       this.emit('read', line);
