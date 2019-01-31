@@ -41,12 +41,15 @@ class JsonRpc extends EventEmitter {
     this.rejectLocalErrorResponsePromises = options.rejectLocalErrorResponsePromises || false;
     this.lineEmitter = options.lineEmitter || new LineEmitter(stream);
     this.txController = options.txController || new TransactionController();
-    this.objectEmitter = options.objectEmitter || this;
+    this.objectEmitter = options.objectEmitter;
 
+    if(this.objectEmitter == null) {
+      this.objectEmitter = new EventEmitter();
+    }
     this.lineEmitter.on('line', (line) => {
       this.emit('read', line);
       let message = JsonRpcLite.parse(line).payload;
-      this.emit('message', message);
+      this.objectEmitter.emit('message', message);
     });
     this.objectEmitter.on('message', (message) => {
       if(message instanceof JsonRpcLite.RequestObject || message instanceof JsonRpcLite.NotificationObject) {
