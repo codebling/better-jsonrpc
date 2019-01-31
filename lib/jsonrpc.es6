@@ -45,8 +45,8 @@ class JsonRpc extends EventEmitter {
 
     if(this.objectEmitter == null) {
       this.objectEmitter = new EventEmitter();
-      this.objectEmitter.send = message => {
-        let responseString = JSON.stringify(responseObject);
+      this.objectEmitter.send = object => {
+        let responseString = JSON.stringify(object);
         this.sendString(responseString);
       }
     }
