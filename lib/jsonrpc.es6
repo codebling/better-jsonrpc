@@ -39,7 +39,7 @@ class JsonRpc extends EventEmitter {
     this.stream = options.stream;
     this.addLF = 'addLF' in options ? options.addLF : true;
     this.rejectLocalErrorResponsePromises = options.rejectLocalErrorResponsePromises || false;
-    this.lineEmitter = options.lineEmitter || new LineEmitter(stream);
+    this.lineEmitter = options.lineEmitter;
     this.txController = options.txController || new TransactionController();
     this.objectEmitter = options.objectEmitter;
 
@@ -49,6 +49,9 @@ class JsonRpc extends EventEmitter {
         let responseString = JSON.stringify(object);
         this.sendString(responseString);
       }
+    }
+    if(this.lineEmitter == null) {
+      this.lineEmitter = new LineEmitter(stream);
     }
     this.lineEmitter.on('line', (line) => {
       this.emit('read', line);
