@@ -39,14 +39,30 @@ class JsonRpc extends EventEmitter {
     this.stream = options.stream;
     this.addLF = 'addLF' in options ? options.addLF : true;
     this.rejectLocalErrorResponsePromises = options.rejectLocalErrorResponsePromises || false;
-    this.lineEmitter = options.lineEmitter || new LineEmitter(stream);
+    this.lineEmitter = options.lineEmitter;
     this.txController = options.txController || new TransactionController();
-    this.objectEmitter = options.objectEmitter || this;
+    this.objectEmitter = options.objectEmitter;
 
+    if(this.objectEmitter == null) {
+      this.objectEmitter = new EventEmitter();
+      this.objectEmitter.send = object => {
+        let responseString = JSON.stringify(object);
+        this.sendString(responseString);
+      };
+    }
+    if(this.lineEmitter == null) {
+      this.lineEmitter = new LineEmitter(stream);
+      this.lineEmitter.send = string => {
+        if(this.addLF) {
+          string += '\n';
+        }
+        this.sendFinalString(string);
+      };
+    }
     this.lineEmitter.on('line', (line) => {
       this.emit('read', line);
       let message = JsonRpcLite.parse(line).payload;
-      this.emit('message', message);
+      this.objectEmitter.emit('message', message);
     });
     this.objectEmitter.on('message', (message) => {
       if(message instanceof JsonRpcLite.RequestObject || message instanceof JsonRpcLite.NotificationObject) {
@@ -193,14 +209,14 @@ class JsonRpc extends EventEmitter {
     this.emit('response.' + request.method, responseObject, request, 'local');
     this.emit('local.response', responseObject, request, 'local');
     this.emit('local.response.' + request.method, responseObject, request, 'local');
-    let responseString = JSON.stringify(responseObject);
-    this.sendString(responseString);
+    this.sendObject(responseObject);
+  }
+
+  sendObject(object) {
+    this.objectEmitter.send(object);
   }
   sendString(responseString) {
-    if(this.addLF) {
-      responseString += '\n';
-    }
-    this.sendFinalString(responseString);
+    this.lineEmitter.send(responseString);
   }
   sendFinalString(finalResponseString) {
     this.emit('write', finalResponseString);
