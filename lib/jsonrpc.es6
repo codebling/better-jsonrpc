@@ -200,7 +200,11 @@ class JsonRpc extends EventEmitter {
     this.emit('response.' + request.method, responseObject, request, 'local');
     this.emit('local.response', responseObject, request, 'local');
     this.emit('local.response.' + request.method, responseObject, request, 'local');
-    this.objectEmitter.send(responseObject);
+    this.sendObject(responseObject);
+  }
+
+  sendObject(object) {
+    this.objectEmitter.send(object);
   }
   sendString(responseString) {
     if(this.addLF) {
