@@ -62,9 +62,22 @@ class JsonRpc extends EventEmitter {
     this.lineEmitter.on('line', (line) => {
       this.emit('read', line);
       let message = JsonRpcLite.parse(line).payload;
-      this.objectEmitter.emit('message', message);
+      this.objectEmitter.emit('parsedMessage', message);
     });
-    this.objectEmitter.on('message', (message) => {
+    this.objectEmitter.on('message', (...args) => {
+      if(args.length != 1) {
+        this.emit('error', 'Received message with too many arguments or none at all! Arguments: ' + JSON.stringify(args));
+      } else {
+        const rawMessage = args[0];
+        let message = JsonRpcLite.parseObject(rawMessage).payload;
+        if(message.error && message.error.code && message.error.code <= -32600 && message.error.code >= -32700) {
+          this.emit('error', 'JSONRPC-lite could not parse the message. Message: ' + JSON.stringify(rawMessage));
+        } else {
+          this.objectEmitter.emit('message', message);
+        }
+      }
+    });
+    this.objectEmitter.on('parsedMessage', (message) => {
       if(message instanceof JsonRpcLite.RequestObject || message instanceof JsonRpcLite.NotificationObject) {
         let response = new Response(message.id, this);
         if(message instanceof JsonRpcLite.RequestObject) {
