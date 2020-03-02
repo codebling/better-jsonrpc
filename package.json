@@ -14,7 +14,7 @@
     "perf": "node_modules/.bin/mocha perf/**/*.es6 perf/**/*.js"
   },
   "dependencies": {
-    "binary-search-tree": "^0.2.6",
+    "@codebling/binary-search-tree": "^2.12.3",
     "bluebird": "^3.5.1",
     "jsonrpc-lite": "github:codebling/jsonrpc-lite"
   }

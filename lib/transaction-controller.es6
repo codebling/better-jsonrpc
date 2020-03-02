@@ -1,6 +1,6 @@
 const IdTable = require('./id-table.es6');
 const Promise = require('bluebird');
-const BST = require('binary-search-tree').BinarySearchTree;
+const BST = require('@codebling/binary-search-tree').BinarySearchTree;
 
 class TransactionController {
   constructor(options) {
