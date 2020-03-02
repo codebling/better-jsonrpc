@@ -1,1 +1,1 @@
-module.exports = require('./lib/jsonrpc.es6');
+module.exports = require('./lib/jsonrpc');
