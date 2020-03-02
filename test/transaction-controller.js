@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const TransactionController = require('../lib/transaction-controller.es6');
+const TransactionController = require('../lib/transaction-controller');
 
 describe('TransactionController', function() {
   it('should not reuse IDs from existing transactions', function() {

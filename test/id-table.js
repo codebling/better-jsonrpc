@@ -1,7 +1,7 @@
 const should = require('chai').should();
 const expect = require('chai').expect;
 
-const IdTable = require('../lib/id-table.es6');
+const IdTable = require('../lib/id-table');
 
 describe('IdTable', function() {
   it('should have symmetrical getIndex and getId functions', function() {
