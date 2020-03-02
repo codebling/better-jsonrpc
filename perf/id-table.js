@@ -1,4 +1,4 @@
-const IdTable = require('../lib/id-table.es6');
+const IdTable = require('../lib/id-table');
 
 const table = new IdTable();
 

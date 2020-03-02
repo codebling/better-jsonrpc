@@ -1,7 +1,7 @@
 {
   "name": "better-jsonrpc",
   "version": "1.1.1",
-  "main": "index.es6",
+  "main": "index",
   "private": true,
   "license": "UNLICENSED",
   "devDependencies": {
@@ -10,8 +10,8 @@
     "sinon": "^9.0.0"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha test/**/*.es6 test/**/*.js --timeout 10000",
-    "perf": "node_modules/.bin/mocha perf/**/*.es6 perf/**/*.js"
+    "test": "node_modules/.bin/mocha test/**/*.js --timeout 10000",
+    "perf": "node_modules/.bin/mocha perf/**/*.js"
   },
   "dependencies": {
     "@codebling/binary-search-tree": "^2.12.3",
